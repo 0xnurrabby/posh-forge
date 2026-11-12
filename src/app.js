@@ -1038,7 +1038,7 @@
     }).join(', ');
     refs.suggestCopy.textContent =
       '"' + currentState().suffix + '" contains ' + invalidLabel +
-      '. Hex can only use 0–9 and a–f. Try a visual translation:';
+      '. Hex can only use 0 to 9 and a to f. Try a visual translation:';
     refs.suggestList.replaceChildren();
 
     if (candidates.length === 0) {
