@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#09090B" id="themeColorMeta">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="A local-only, multi-chain vanity wallet generator for EVM networks and Solana. Zero network requests. Zero custody.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' blob:; style-src 'unsafe-inline'; font-src data:; img-src data:; worker-src blob:; connect-src 'none'; media-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none';">
+  <title>POSH / FORGE | Local Vanity Wallet Generator</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2309090B'/%3E%3Crect x='1' y='1' width='30' height='30' rx='6' fill='none' stroke='%23FAFAFA' stroke-opacity='.25'/%3E%3Cpath d='M11 23V9h6.2a4.2 4.2 0 0 1 0 8.4H11' fill='none' stroke='%23FAFAFA' stroke-width='2'/%3E%3C/svg%3E">
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem('posh.theme');
+        document.documentElement.dataset.theme = stored === 'light' ? 'light' : 'dark';
+      } catch (_) {
+        document.documentElement.dataset.theme = 'dark';
+      }
+    })();
+  </script>
+  <style>
+{{FONTS}}
+{{STYLES}}
+  </style>
+</head>
+<body>
+  <svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-stop" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.5" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.2A8 8 0 1 1 9.8 4a6.4 6.4 0 0 0 10.2 10.2Z"/></symbol>
+    <symbol id="i-volume" viewBox="0 0 24 24"><path d="M4 9.5v5h3.5L13 19V5L7.5 9.5H4Z"/><path d="M16.5 9a4.5 4.5 0 0 1 0 6M19 6.5a8 8 0 0 1 0 11"/></symbol>
+    <symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 9.5v5h3.5L13 19V5L7.5 9.5H4Z"/><path d="M16.5 9.5l5 5M21.5 9.5l-5 5"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5M12 14.5v2"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v5.5c0 5-3.4 8.5-8 9.5-4.6-1-8-4.5-8-9.5V6l8-3Z"/><path d="M8.8 12.1l2.1 2.1 4.5-4.6"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3.5 22 20H2L12 3.5Z"/><path d="M12 9v5M12 17.2v.3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 7M20 4v7h-7"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9" y="9" width="6" height="6" rx="1"/><path d="M9 2.5V6M15 2.5V6M9 18v3.5M15 18v3.5M2.5 9H6M2.5 15H6M18 9h3.5M18 15h3.5"/></symbol>
+    <symbol id="i-brand" viewBox="0 0 32 32"><rect x="2.5" y="2.5" width="27" height="27" rx="7"/><path d="M11.5 22.5v-13h5.2a3.6 3.6 0 0 1 0 7.2h-5.2"/></symbol>
+  </svg>
+
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="brand" href="#top" aria-label="POSH / FORGE LOCAL, back to top">
+        <svg class="brand-mark" aria-hidden="true"><use href="#i-brand"/></svg>
+        <span class="brand-word">POSH</span>
+        <span class="brand-slash">/</span>
+        <span class="brand-word">FORGE</span>
+        <span class="brand-tag">LOCAL</span>
+      </a>
+      <div class="topbar-actions">
+        <div class="net-badge" id="networkBadge" role="status" title="Outbound network requests made by this app">
+          <span class="status-dot"></span>
+          <span id="netBadgeText">NET 0</span>
+        </div>
+        <button class="icon-button" id="soundToggle" type="button" aria-pressed="true" aria-label="Mute sound alerts" title="Sound alerts on">
+          <svg class="icon-sound-on" aria-hidden="true"><use href="#i-volume"/></svg>
+          <svg class="icon-sound-off" aria-hidden="true"><use href="#i-mute"/></svg>
+        </button>
+        <button class="icon-button" id="themeToggle" type="button" aria-label="Switch to light theme" title="Switch theme">
+          <svg class="icon-theme-dark" aria-hidden="true"><use href="#i-sun"/></svg>
+          <svg class="icon-theme-light" aria-hidden="true"><use href="#i-moon"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell" id="top">
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="hero-copy">
+        <div class="eyebrow">
+          <span class="eyebrow-rule"></span>
+          <span>Local-only vanity wallet forge</span>
+          <span class="eyebrow-mark" aria-hidden="true">+</span>
+        </div>
+        <h1 id="heroTitle">A little vanity.<br><span>A lot of math.</span></h1>
+        <p class="hero-sub">Pattern-matched EVM and Solana wallets, forged inside your browser. Choose the edges, let parallel workers fill the middle. Keys never leave this tab.</p>
+      </div>
+      <aside class="hero-spec" aria-label="Runtime facts">
+        <div class="spec-row"><span>ENGINES</span><strong>EVM / SOLANA</strong></div>
+        <div class="spec-row"><span>PRIMITIVES</span><strong>SECP256K1 / ED25519</strong></div>
+        <div class="spec-row"><span>THREADS</span><strong id="threadMeta">-</strong></div>
+        <div class="spec-row"><span>NETWORK CALLS</span><strong><span class="js-net-count">0</span> / ZERO</strong></div>
+        <div class="spec-stamp">
+          <span class="status-dot"></span>
+          <span id="heroNetwork">ONLINE INTERFACE</span>
+        </div>
+      </aside>
+    </section>
+
+    <div class="console-grid">
+      <section class="panel builder" id="builder" aria-labelledby="builderTitle">
+        <div class="panel-head builder-head">
+          <div class="title-cluster">
+            <span class="section-index">01</span>
+            <div>
+              <h2 id="builderTitle">Pattern builder</h2>
+              <p class="panel-sub" id="engineContext">Ethereum · BNB Chain · Polygon · Base</p>
+            </div>
+          </div>
+          <div class="engine-switch" role="group" aria-label="Select chain engine">
+            <button type="button" class="engine-btn is-active" data-engine="evm" aria-pressed="true">
+              <span class="engine-name">EVM</span>
+              <span class="engine-sub">HEX / 40</span>
+            </button>
+            <button type="button" class="engine-btn" data-engine="sol" aria-pressed="false">
+              <span class="engine-name">SOLANA</span>
+              <span class="engine-sub">BASE58 / 32</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="engine-meta">
+          <span id="engineChains">Ethereum · BNB Chain · Polygon · Base</span>
+          <span class="engine-meta-sep" aria-hidden="true">/</span>
+          <span id="engineAlgo">secp256k1 → keccak-256</span>
+        </div>
+
+        <div class="control-pair">
+          <div class="control-block" id="leadBlock">
+            <div class="control-head">
+              <label for="leadRange">
+                <span class="control-label" id="leadLabel">Leading pad</span>
+                <span class="control-hint" id="leadHint">Zeros directly after 0x</span>
+              </label>
+              <div class="stepper">
+                <button type="button" class="step-button" id="leadMinus" aria-label="Decrease leading padding">−</button>
+                <output class="step-value" id="leadValue" for="leadRange">1</output>
+                <span class="step-max" id="leadMaxLabel">/ 6</span>
+                <button type="button" class="step-button" id="leadPlus" aria-label="Increase leading padding">+</button>
+              </div>
+            </div>
+            <input class="range" id="leadRange" type="range" min="0" max="6" step="1" value="1" aria-label="Leading padding">
+            <div class="range-scale" id="leadScale" aria-hidden="true"></div>
+            <div class="control-foot">
+              <span id="leadFoot">Locks 1 leading hex zero.</span>
+              <span id="leadCapNote" class="control-cap"></span>
+            </div>
+          </div>
+
+          <div class="control-block" id="preBlock">
+            <div class="control-head">
+              <label for="preRange">
+                <span class="control-label" id="preLabel">Pre-suffix pad</span>
+                <span class="control-hint" id="preHint">Zeros immediately before the word</span>
+              </label>
+              <div class="stepper">
+                <button type="button" class="step-button" id="preMinus" aria-label="Decrease pre-suffix padding">−</button>
+                <output class="step-value" id="preValue" for="preRange">0</output>
+                <span class="step-max" id="preMaxLabel">/ 4</span>
+                <button type="button" class="step-button" id="prePlus" aria-label="Increase pre-suffix padding">+</button>
+              </div>
+            </div>
+            <input class="range" id="preRange" type="range" min="0" max="4" step="1" value="0" aria-label="Pre-suffix padding">
+            <div class="range-scale" id="preScale" aria-hidden="true"></div>
+            <div class="control-foot">
+              <span id="preFoot">No pre-suffix padding.</span>
+              <span id="preCapNote" class="control-cap"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="suffix-block">
+          <div class="control-head suffix-head">
+            <label for="suffixInput">
+              <span class="control-label">Ending word</span>
+              <span class="control-hint" id="suffixHint">Matched at the tail of the address</span>
+            </label>
+            <div class="suffix-counter">
+              <span id="suffixCount">3 / 6</span>
+              <span id="suffixAvail">AVAILABLE</span>
+            </div>
+          </div>
+          <div class="suffix-field" id="suffixField">
+            <span class="suffix-ellipsis" aria-hidden="true">…</span>
+            <input id="suffixInput" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" value="ACE" placeholder="ACE" aria-describedby="validationDetail suffixHint">
+            <span class="suffix-tag" id="suffixEngineTag">HEX</span>
+          </div>
+          <div class="char-strip" id="charStrip" aria-hidden="true"></div>
+          <div class="base58-tip" id="base58Tip" role="tooltip" hidden>
+            <div class="tip-mark" aria-hidden="true">i</div>
+            <div class="tip-copy">
+              <strong>Base58 omits <span class="mono">0&nbsp; O&nbsp; I&nbsp; l</span>.</strong>
+              <span id="base58TipCopy">These look-alike characters are removed to keep addresses unambiguous.</span>
+            </div>
+            <button type="button" class="tip-close" id="base58TipClose" aria-label="Dismiss Base58 explanation">
+              <svg aria-hidden="true"><use href="#i-close"/></svg>
+            </button>
+          </div>
+          <div class="validation-row">
+            <span class="validity-badge" id="validationStatus"><svg aria-hidden="true"><use href="#i-check"/></svg><span>VALID HEX</span></span>
+            <span class="validation-detail" id="validationDetail">Ready for secp256k1 derivations.</span>
+          </div>
+          <div class="suggest-panel" id="suggestPanel" hidden>
+            <div class="suggest-head">
+              <span class="suggest-kicker"><svg aria-hidden="true"><use href="#i-alert"/></svg>Smart hex</span>
+              <span class="suggest-copy" id="suggestCopy"></span>
+            </div>
+            <div class="suggest-list" id="suggestList"></div>
+          </div>
+          <div class="preset-row">
+            <span class="preset-label" id="presetLabel">Posh presets</span>
+            <div class="preset-list" id="presetList"></div>
+          </div>
+        </div>
+
+        <label class="case-row" id="caseRow" for="caseToggle">
+          <span class="case-copy">
+            <span class="control-label" id="caseLabel">Strict EIP-55 casing</span>
+            <span class="control-hint" id="caseHint">Enforce checksum letter case. Multiplication applies to the search space.</span>
+          </span>
+          <span class="case-actions">
+            <span class="case-factor" id="caseFactor">×1</span>
+            <input type="checkbox" id="caseToggle">
+            <span class="switch-track" aria-hidden="true"><span></span></span>
+          </span>
+        </label>
+
+        <div class="calc-strip">
+          <span class="calc-label">Search model</span>
+          <span class="calc-formula" id="formulaOut"></span>
+          <span class="calc-divider" aria-hidden="true"></span>
+          <span class="calc-mean">MEAN <b id="meanOut">-</b></span>
+        </div>
+
+        <div class="cap-row">
+          <span class="cap-badge" id="capBadge" hidden><svg aria-hidden="true"><use href="#i-lock"/></svg><span>Max Browser Safe Complexity Reached</span></span>
+          <span class="cap-left" id="capLeft">4 of 7 locks used</span>
+          <button type="button" class="text-button" id="resetBtn">
+            <svg aria-hidden="true"><use href="#i-refresh"/></svg>
+            Reset pattern
+          </button>
+        </div>
+      </section>
+
+      <aside class="side-stack">
+        <section class="panel preview-panel" aria-labelledby="previewTitle">
+          <div class="panel-head">
+            <div class="title-cluster">
+              <span class="section-index">LIVE</span>
+              <div>
+                <h2 id="previewTitle">Address preview</h2>
+                <p class="panel-sub" id="previewSub">Illustrative middle characters</p>
+              </div>
+            </div>
+            <span class="mini-badge" id="previewStatus">SIMULATED</span>
+          </div>
+
+          <div class="preview-screen">
+            <div class="preview-address" id="previewAddress" aria-label="Address pattern preview"></div>
+          </div>
+
+          <div class="lock-row">
+            <span class="lock-readout" id="lockReadout">LOCKED 4 / 7</span>
+            <div class="lock-meter" id="lockMeter" aria-hidden="true"></div>
+          </div>
+
+          <div class="preview-footer">
+            <span id="previewNote">Locks are shown in solid.</span>
+            <span class="mini-badge" id="previewBadge">EIP-55</span>
+          </div>
+          <div class="chain-row" id="previewChains">ETH · BSC · POLYGON · BASE</div>
+        </section>
+
+        <section class="panel launch-panel" aria-labelledby="launchTitle">
+          <div class="panel-head">
+            <div class="title-cluster">
+              <span class="section-index">RUN</span>
+              <div>
+                <h2 id="launchTitle">Forge profile</h2>
+                <p class="panel-sub">One match, then the engine stops.</p>
+              </div>
+            </div>
+            <span class="thread-pill" id="threadPill">8 THREADS</span>
+          </div>
+
+          <div class="profile-lead">
+            <div>
+              <span class="micro-label">Mean attempts</span>
+              <strong class="profile-value" id="profileMean">-</strong>
+            </div>
+            <code class="profile-formula" id="profileFormula">-</code>
+          </div>
+
+          <dl class="profile-meta">
+            <div><dt>MATCH</dt><dd id="profileMode">Case-insensitive hex</dd></div>
+            <div><dt>DERIVATION</dt><dd id="profileEngine">secp256k1 → keccak-256</dd></div>
+          </dl>
+
+          <button class="start-button" id="startBtn" type="button">
+            <span class="start-copy">
+              <span class="start-label" id="startLabel">Start grinding</span>
+              <span class="start-sub" id="startSub">Local workers · no upload</span>
+            </span>
+            <span class="start-icon" id="startIcon" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span>
+          </button>
+
+          <div class="start-below">
+            <span id="startHint">Runs entirely in this tab. Nothing leaves your browser.</span>
+            <span class="shortcut-hint" aria-label="Keyboard shortcut Control plus Enter"><kbd>Ctrl</kbd><kbd>↵</kbd></span>
+          </div>
+
+          <div class="shield-block" id="shieldBlock">
+            <div class="shield-head">
+              <span class="shield-title"><svg aria-hidden="true"><use href="#i-shield"/></svg>Offline shield</span>
+              <span class="shield-status" id="shieldStatus">ONLINE</span>
+            </div>
+            <p class="shield-copy" id="shieldCopy">Your network interface is active. Turn off Wi-Fi before grinding for a fully air-gapped run.</p>
+            <div class="shield-metrics">
+              <span>OUTBOUND <b class="js-net-count">0</b></span>
+              <span>CSP CONNECT-SRC NONE</span>
+              <span>FULLY BUNDLED</span>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <section class="telemetry" aria-labelledby="telemetryTitle">
+      <div class="section-head">
+        <div class="title-cluster">
+          <span class="section-index">02</span>
+          <div>
+            <h2 id="telemetryTitle">Live telemetry</h2>
+            <p class="panel-sub">Interpolated at display rate. Sampled every 500 keys per worker.</p>
+          </div>
+        </div>
+        <div class="engine-status" id="engineStatus" data-status="idle">
+          <span class="status-dot"></span>
+          <span id="engineStatusText">IDLE</span>
+        </div>
+      </div>
+
+      <div class="telemetry-grid">
+        <article class="panel stat-card speed-card" aria-labelledby="speedTitle">
+          <div class="stat-head"><h3 id="speedTitle">Hash rate</h3><span class="stat-kicker">EWMA</span></div>
+          <div class="stat-main"><span class="stat-value" id="speedValue">0</span><span class="stat-unit">keys/s</span></div>
+          <svg class="sparkline" viewBox="0 0 240 58" preserveAspectRatio="none" aria-hidden="true">
+            <path class="spark-grid" d="M0 48.5H240M0 30.5H240M0 12.5H240"/>
+            <path class="spark-path" id="sparkPath" d="M0 49L240 49"/>
+            <circle class="spark-dot" id="sparkDot" cx="240" cy="49" r="2.5"/>
+          </svg>
+          <div class="stat-foot"><span id="speedSub">All workers idle</span><span id="speedPeak">PEAK 0</span></div>
+        </article>
+
+        <article class="panel stat-card" aria-labelledby="attemptsTitle">
+          <div class="stat-head"><h3 id="attemptsTitle">Attempts</h3><span class="stat-kicker">SESSION</span></div>
+          <div class="stat-main"><span class="stat-value" id="attemptsValue">0</span></div>
+          <div class="mini-readout">
+            <span>ELAPSED</span>
+            <strong id="elapsedValue">00:00.000</strong>
+          </div>
+          <div class="stat-foot"><span id="attemptsSub">No engine started</span><span id="attemptsWorkers">-</span></div>
+        </article>
+
+        <article class="panel stat-card probability-card" aria-labelledby="probabilityTitle">
+          <div class="stat-head"><h3 id="probabilityTitle">Hit probability</h3><span class="stat-kicker">≥1 MATCH</span></div>
+          <div class="stat-main"><span class="stat-value" id="probValue">0.000%</span></div>
+          <div class="prob-track" id="probTrack" role="progressbar" aria-label="Probability of at least one match" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span class="prob-bar" id="probBar"></span>
+          </div>
+          <div class="prob-scale" aria-hidden="true"><span>0</span><span>25</span><span>50</span><span>75</span><span>99.9</span></div>
+          <div class="stat-foot"><span>1 − (1 − P)<sup>attempts</sup></span><span id="probTag">IDLE</span></div>
+        </article>
+
+        <article class="panel stat-card eta-card" aria-labelledby="etaTitle">
+          <div class="stat-head"><h3 id="etaTitle">Mean ETA</h3><span class="stat-kicker" id="etaTag">IDLE</span></div>
+          <div class="eta-main" id="etaValue">--:--</div>
+          <div class="eta-sub" id="etaSub">Awaiting engine</div>
+          <div class="stat-foot"><span id="etaExpected">MEAN -</span><span id="etaRate">@ 0 keys/s</span></div>
+        </article>
+      </div>
+
+      <div class="terminal-strip">
+        <div class="terminal-command">
+          <span class="terminal-prompt">$</span>
+          <span class="terminal-cmd" id="terminalCmd">forge --engine evm --lead 1 --pre 0 --word ACE --case loose</span>
+          <span class="terminal-caret" aria-hidden="true"></span>
+        </div>
+        <div class="terminal-meta">
+          <span id="termSession">SESSION 0000</span>
+          <span id="termWorkers">0 WORKERS</span>
+          <span>NET <b class="js-net-count">0</b> · MEM-ONLY</span>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="footer-brand">POSH <span>/</span> FORGE</div>
+      <p>Raw keys are generated locally with CSPRNG entropy. Back up before you leave this page. Never share a private key.</p>
+      <div class="footer-meta">BUILD 001 · <span id="footerThreads">-</span> THREADS · 100% CLIENT-SIDE</div>
+    </footer>
+  </main>
+
+  <dialog class="vault-dialog" id="vaultDialog" aria-labelledby="vaultTitle">
+    <div class="vault-shell" id="vaultShell">
+      <header class="vault-head">
+        <div>
+          <div class="eyebrow vault-eyebrow">
+            <span class="eyebrow-rule"></span>
+            <span>Secure vault / <span id="vaultElapsed">FOUND IN 00:00.0</span></span>
+          </div>
+          <h2 id="vaultTitle">Wallet found.</h2>
+          <p class="vault-sub">A keypair was generated and verified locally. Download a backup before closing this vault.</p>
+        </div>
+        <button type="button" class="icon-button vault-close" id="vaultClose" aria-label="Close secure vault">
+          <svg aria-hidden="true"><use href="#i-close"/></svg>
+        </button>
+      </header>
+
+      <div class="vault-address-block">
+        <div class="vault-label-row">
+          <span class="micro-label">ADDRESS</span>
+          <span class="mini-badge" id="vaultChainBadge">EVM · EIP-55</span>
+        </div>
+        <div class="vault-address-line">
+          <code id="vaultAddress"></code>
+          <button type="button" class="copy-button" id="copyAddressBtn">
+            <svg aria-hidden="true"><use href="#i-copy"/></svg>
+            <span>Copy</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="vault-stats">
+        <div><span>ATTEMPTS</span><strong id="vaultAttempts">-</strong></div>
+        <div><span>TIME</span><strong id="vaultTime">-</strong></div>
+        <div><span>AVG RATE</span><strong id="vaultSpeed">-</strong></div>
+        <div><span>HIT CHANCE</span><strong id="vaultProbability">100.000%</strong></div>
+      </div>
+
+      <div class="vault-secret-block">
+        <div class="secret-head">
+          <div class="secret-title-group">
+            <span class="micro-label" id="secretLabel">PRIVATE KEY / HEX</span>
+            <span class="secret-warn">NEVER SHARE</span>
+          </div>
+          <span class="hold-hint" id="holdHint">HOLD TO REVEAL</span>
+        </div>
+
+        <div class="secret-panel" id="secretPanel" role="button" tabindex="0" aria-pressed="false" aria-label="Hold to reveal private key">
+          <code class="secret-value" id="secretValue"></code>
+          <span class="secret-cover" id="secretCover">
+            <svg aria-hidden="true"><use href="#i-eye"/></svg>
+            <span>Press &amp; hold to reveal</span>
+            <span class="hold-progress" aria-hidden="true"></span>
+          </span>
+        </div>
+
+        <div class="secret-actions">
+          <button type="button" class="action-button" id="copySecretBtn">
+            <svg aria-hidden="true"><use href="#i-copy"/></svg>
+            <span>Copy private key</span>
+          </button>
+          <button type="button" class="action-button" id="phantomCopyBtn" hidden>
+            <svg aria-hidden="true"><use href="#i-copy"/></svg>
+            <span>Copy Phantom array</span>
+          </button>
+          <button type="button" class="action-button is-primary" id="downloadBtn">
+            <svg aria-hidden="true"><use href="#i-download"/></svg>
+            <span>Download .txt backup</span>
+          </button>
+        </div>
+
+        <div class="phantom-block" id="phantomBlock" hidden>
+          <span class="phantom-label">PHANTOM-COMPATIBLE ARRAY [64]</span>
+          <code id="phantomValue"></code>
+        </div>
+      </div>
+
+      <p class="vault-warning">
+        <svg aria-hidden="true"><use href="#i-alert"/></svg>
+        <span>Anyone with this secret can control the wallet. Store it offline, verify the address before funding, and never paste it into a website. This is the only copy in this tab.</span>
+      </p>
+
+      <footer class="vault-footer">
+        <button type="button" class="text-button" id="newSearchBtn">← New pattern</button>
+        <span>Backup first. Clearing the vault is permanent.</span>
+      </footer>
+    </div>
+  </dialog>
+
+  <div class="toast-stack" id="toastStack" role="status" aria-live="polite"></div>
+
+  <script id="worker-source" type="text/plain">{{WORKER_BASE64}}</script>
+  <script>
+{{APP}}
+  </script>
+</body>
+</html>
