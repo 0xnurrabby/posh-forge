@@ -1,3 +1,4 @@
+GitFi.fun sync ID: GF-114444C4-7264445A · wallet gitfi-2a8fde61e0c8eb43.near · repo 0xnurrabby/posh-forge
 # POSH / FORGE
 
 A local-only vanity wallet generator for EVM networks and Solana.
